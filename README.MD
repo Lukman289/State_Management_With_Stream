@@ -120,24 +120,48 @@ final List<Color> colors = [
     Di dalam class ColorStream ketik method seperti kode berikut. Perhatikan tanda bintang di akhir keyword async* (ini digunakan untuk melakukan Stream data)
 
 ```dart
+import 'package:flutter/material.dart';
 
+class ColorStream {
+  final List<Color> colors = [
+    Colors.blueGrey,
+    Colors.amber,
+    Colors.deepPurple,
+    Colors.lightBlue,
+    Colors.teal,
+    Colors.pinkAccent,
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.redAccent,
+    Colors.orangeAccent,
+  ];
+
+  Stream<Color> get colorStream async* {
+
+  }
+}
 ```
 
 ### Langkah 6: Tambah perintah yield*
     Tambahkan kode berikut ini.
 
 ```dart
-yield* Stream.periodic(
-  const Duration(seconds: 1), (int t) {
-    int index = t % colors.length;
-    return colors[index];
-});
+Stream<Color> get colorStream async* {
+    yield* Stream.periodic(
+        const Duration(seconds: 1), (int t) {
+        int index = t % colors.length;
+        return colors[index];
+        }
+    );
+}
 ```
 
 > 3. Task
 > - Jelaskan fungsi keyword yield* pada kode tersebut!
 > - Apa maksud isi perintah kode tersebut?
 > - Lakukan commit hasil jawaban Soal 3 dengan pesan "W13: Jawaban Soal 3"
+> 
+>   **Jawaban**: yield* digunakan untuk memungkinkan fungsi colorStream menghasilkan warna yang berubah setiap detiknya berdasarkan warna yang sudah diberikan.
 
 ## Langkah 7: Buka main.dart
     Ketik kode impor file ini pada file main.dart
