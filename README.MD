@@ -74,18 +74,47 @@ class MyApp extends StatelessWidget {
     Buat file baru di folder lib project Anda. Lalu isi dengan kode berikut.
 
 ```dart
+import 'package:flutter/material.dart';
 
+class ColorStream {
+  
+}
 ```
 
 ### Langkah 4: Tambah variabel colors
     Tambahkan variabel di dalam class ColorStream seperti berikut.
     
 ```dart
+import 'package:flutter/material.dart';
 
+class ColorStream {
+  final List<Color> colors = [
+    Colors.blueGrey,
+    Colors.amber,
+    Colors.deepPurple,
+    Colors.lightBlue,
+    Colors.teal,
+  ];
+}
 ```
 > 2. Task
 > - Tambahkan 5 warna lainnya sesuai keinginan Anda pada variabel colors tersebut.
 > - Lakukan commit hasil jawaban Soal 2 dengan pesan "W13: Jawaban Soal 2"
+
+```dart
+final List<Color> colors = [
+    Colors.blueGrey,
+    Colors.amber,
+    Colors.deepPurple,
+    Colors.lightBlue,
+    Colors.teal,
+    Colors.pinkAccent,
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.redAccent,
+    Colors.orangeAccent,
+];
+```
 
 ### Langkah 5: Tambah method getColors()
     Di dalam class ColorStream ketik method seperti kode berikut. Perhatikan tanda bintang di akhir keyword async* (ini digunakan untuk melakukan Stream data)
