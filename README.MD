@@ -136,8 +136,8 @@ class ColorStream {
     Colors.orangeAccent,
   ];
 
-  Stream<Color> get colorStream async* {
-
+  Stream<Color> getColors() async* {
+ 
   }
 }
 ```
@@ -146,7 +146,7 @@ class ColorStream {
     Tambahkan kode berikut ini.
 
 ```dart
-Stream<Color> get colorStream async* {
+Stream<Color> getColors() async* {
     yield* Stream.periodic(
         const Duration(seconds: 1), (int t) {
         int index = t % colors.length;
@@ -167,6 +167,7 @@ Stream<Color> get colorStream async* {
     Ketik kode impor file ini pada file main.dart
 
 ```dart
+import 'package:flutter/material.dart';
 import 'stream.dart';
 ```
 
@@ -174,49 +175,87 @@ import 'stream.dart';
     Ketik dua properti ini di dalam class _StreamHomePageState
 
 ```dart
-
+class _StreamHomePageState extends State<StreamHomePage> {
+  Color bgColor = Colors.blueGrey;
+  late ColorStream colorStream;
 ```
 
 ## Langkah 9: Tambah method changeColor()
     Tetap di file main, Ketik kode seperti berikut
 
 ```dart
-
+void changeColor(Color color) async {
+    await for (var eventColor in colorStream.getColors()) {
+        setState(() {
+        bgColor = eventColor;
+        });
+    }
+}
 ```
 
 ## Langkah 10: Lakukan override initState()
     Ketika kode seperti berikut
 
 ```dart
-
+@override
+  void initState() {
+    super.initState();
+    colorStream = ColorStream();
+    changeColor();
+  }
 ```
 
 ## Langkah 11: Ubah isi Scaffold()
     Sesuaikan kode seperti berikut.
 
 ```dart
-
+Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+            title: const Text('Stream Lukman'),
+        ),
+        body: Container(
+            decoration: BoxDecoration(color: bgColor),
+        ),
+    );
+}
 ```
 
 ## Langkah 12: Run Project
     Lakukan running pada aplikasi Flutter Anda, maka akan terlihat berubah warna background setiap detik.
 
-![image for practicum 1 step 12]()
+![image for practicum 1 step 12](images\task\task-4.gif)
 
 > 4. Task
 > - Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 > - Lakukan commit hasil jawaban Soal 4 dengan pesan "W13: Jawaban Soal 4"
 
+![image for Task 4](images\task\task-4.gif)
+
 ## Langkah 13: Ganti isi method changeColor()
     Anda boleh comment atau hapus kode sebelumnya, lalu ketika kode seperti berikut.
 
 ```dart
+void changeColor() async {
+    // await for (var eventColor in colorStream.getColors()) {
+    //   setState(() {
+    //     bgColor = eventColor;
+    //   });
+    // }
 
+    colorStream.getColors().listen((eventColor) {
+      setState(() {
+        bgColor = eventColor;
+      });
+    });
+  }
 ```
 
 > 5. Task
 > - Jelaskan perbedaan menggunakan listen dan await for (langkah 9) !
 > - Lakukan commit hasil jawaban Soal 5 dengan pesan "W13: Jawaban Soal 5"
+>
+>   Jawaban: listen digunakan untuk menerima data secara asinkron melalui callback dan tidak memblokir eksekusi kode berikutnya, sedangkah await for berfungsi untuk menunggi data yang diterima dari stream, lalu mengeksekusi kode dengan menunggu sampai ada data baru yang diterima.
 
 > **Catatan** : Stream di Flutter memiliki fitur yang powerfull untuk menangani data secara async. Stream dapat dimanfaatkan pada skenario dunia nyata seperti real-time messaging, unggah dan unduh file, tracking lokasi user, bekerja dengan data sensor IoT, dan lain sebagainya.
 
