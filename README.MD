@@ -487,31 +487,100 @@ Pada praktikum 3 ini, Anda akan menggunakan `StreamTransformers` ke dalam `strea
     Tambahkan variabel baru di dalam class _StreamHomePageState
 
 ```dart
-
+class _StreamHomePageState extends State<StreamHomePage> {
+  Color bgColor = Colors.blueGrey;
+  late ColorStream colorStream;
+  int lastNumber = 0;
+  late StreamController numberStreamController;
+  late NumberStream numberStream;
+  late StreamTransformer transformer;
 ```
 
 ### Langkah 2: Tambahkan kode ini di initState
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+    
+    transformer = StreamTransformer<int, int>.fromHandlers(
+      handleData: (value, sink) {
+        sink.add(value * 10);
+      },
+      handleError: (error, stackTrace, sink) {
+        sink.add(-1);
+      },
+      handleDone: (sink) => sink.close(),
+    );
+    
+    stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    }).onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+}
 ```
 
 ### Langkah 3: Tetap di initState
     Lakukan edit seperti kode berikut.
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+    
+    transformer = StreamTransformer<int, int>.fromHandlers(
+      handleData: (value, sink) {
+        sink.add(value * 10);
+      },
+      handleError: (error, stackTrace, sink) {
+        sink.add(-1);
+      },
+      handleDone: (sink) => sink.close(),
+    );
+    
+    stream.transform(transformer).listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    }).onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+    super.initState();
+}
 ```
 
 ### Langkah 4: Run Project
     Terakhir, run atau tekan F5 untuk melihat hasilnya jika memang belum running. Bisa juga lakukan hot restart jika aplikasi sudah running. Maka hasilnya akan seperti gambar berikut ini. Anda akan melihat tampilan angka dari 0 hingga 90.
 
-![Image for Practicum 3 step 4]()
+![Image for Practicum 3 step 4](images/task/task-8.gif)
 
 > 8. Task
 > - Jelaskan maksud kode langkah 1-3 tersebut!
 > - Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 > - Lalu lakukan commit dengan pesan "W13: Jawaban Soal 8".
+
+>   **Jawaban**: Pada langkah 1 hingga 3 memanfaatkan class StreamTransform untuk mengubah nilai yang akan ditampilkan pada widget. Perubahan tersebut dilakukan sebelum inisialisasi dilakukan pada variabel lastNumber.
+
+![Image for Practicum 3 step 4](images/task/task-8.gif)
 
 ## Praktikum 4: Subscribe ke stream events
 Dari praktikum sebelumnya, Anda telah menggunakan method `listen` mendapatkan nilai dari `stream`. Ini akan menghasilkan sebuah `Subscription`. `Subscription` berisi method yang dapat digunakan untuk melakukan `listen` pada suatu event dari `stream` secara terstruktur.
