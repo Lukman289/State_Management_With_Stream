@@ -1037,18 +1037,48 @@ void initState() {
 ### Langkah 7: Edit method build()
 
 ```dart
-
+@override
+Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stream Lukman'),
+      ),
+      body: StreamBuilder(
+        stream: numberStream,
+        initialData: 0,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print('Error!');
+          }
+          if (snapshot.hasData) {
+            return Center(
+              child: Text(
+                snapshot.data.toString(),
+                style: const TextStyle(fontSize: 96),
+              ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+}
 ```
 
 ### Langkah 8: Run Project
     Hasilnya, setiap detik akan tampil angka baru seperti berikut.
 
-![Image for Practicum 6 step 8]()
+![Image for Practicum 6 step 8](images/task/task-12.gif)
 
 > 12. Task
 > - Jelaskan maksud kode pada langkah 3 dan 7 !
 > - Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 > - Lalu lakukan commit dengan pesan "W13: Jawaban Soal 12".
+
+>   **Jawaban**: Kode pada langkah 3 bertujuan untuk memberikan nilai random pada variabel myNum. Sedangkah pada kode langkah 7 bertujuan untuk menampilkan UI menggunakan widget StreamBuilder. Penggunaan widget ini bertujuan untuk membangun ulang widget setiap kali ada data baru yang diterima oleh stream. Terdapat juga pemeriksaan apakah terjadi error atau tidak, jika terjadi error maka akan mengirimkan pesan error pada debug console, dan terdapat pengecekan apakah terdapat data atau tidak, jika ada akan menampilkan nilai data tersebut dan jika tidak ada akan menampilkan SizedBox
+
+![Image for Practicum 6 step 8](images/task/task-12.gif)
 
 ## Praktikum 7: BLoC Pattern
 Ketika menggunakan pola BLoC, maka segalanya merupakan stream event. BLoC atau Business Logic Component adalah lapisan antara semua sumber data dan UI yang mengonsumsi data itu. Contohnya seperti sumber data dari HTTP layanan web servis atau JSON dari sebuah basis data.
