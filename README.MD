@@ -591,72 +591,235 @@ Pada praktikum 4 ini, kita akan gunakan `Subscription` untuk menangani event dan
     Tambahkan variabel berikut di class _StreamHomePageState
 
 ```dart
-
+class _StreamHomePageState extends State<StreamHomePage> {
+  Color bgColor = Colors.blueGrey;
+  late ColorStream colorStream;
+  int lastNumber = 0;
+  late StreamController numberStreamController;
+  late NumberStream numberStream;
+  late StreamTransformer transformer;
+  late StreamSubscription subscription;
 ```
 
 ### Langkah 2: Edit initState()
     Edit kode seperti berikut ini.
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+
+    // transformer = StreamTransformer<int, int>.fromHandlers(
+    //   handleData: (value, sink) {
+    //     sink.add(value * 10);
+    //   },
+    //   handleError: (error, stackTrace, sink) {
+    //     sink.add(-1);
+    //   },
+    //   handleDone: (sink) => sink.close(),
+    // );
+
+    // stream.transform(transformer).listen((event) {
+    //   setState(() {
+    //     lastNumber = event;
+    //   });
+    // }).onError((error) {
+    //   setState(() {
+    //     lastNumber = -1;
+    //   });
+    // });
+    // super.initState();
+    
+    subscription = stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    });
+    super.initState();
+}
 ```
 
 ### Langkah 3: Tetap di initState()
     Tambahkan kode berikut ini.
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+
+    // transformer = StreamTransformer<int, int>.fromHandlers(
+    //   handleData: (value, sink) {
+    //     sink.add(value * 10);
+    //   },
+    //   handleError: (error, stackTrace, sink) {
+    //     sink.add(-1);
+    //   },
+    //   handleDone: (sink) => sink.close(),
+    // );
+
+    // stream.transform(transformer).listen((event) {
+    //   setState(() {
+    //     lastNumber = event;
+    //   });
+    // }).onError((error) {
+    //   setState(() {
+    //     lastNumber = -1;
+    //   });
+    // });
+    // super.initState();
+    
+    subscription = stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    });
+
+    subscription.onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+    super.initState();
+}
 ```
 
 ### Langkah 4: Tambah properti onDone()
     Tambahkan dibawahnya kode ini setelah onError
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+
+    // transformer = StreamTransformer<int, int>.fromHandlers(
+    //   handleData: (value, sink) {
+    //     sink.add(value * 10);
+    //   },
+    //   handleError: (error, stackTrace, sink) {
+    //     sink.add(-1);
+    //   },
+    //   handleDone: (sink) => sink.close(),
+    // );
+
+    // stream.transform(transformer).listen((event) {
+    //   setState(() {
+    //     lastNumber = event;
+    //   });
+    // }).onError((error) {
+    //   setState(() {
+    //     lastNumber = -1;
+    //   });
+    // });
+    // super.initState();
+    
+    subscription = stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    });
+
+    subscription.onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+
+    subscription.onDone(() {
+      print('onDone was called'); 
+    });
+    super.initState();
+}
 ```
 
 ### Langkah 5: Tambah method baru
     Ketik method ini di dalam class _StreamHomePageState
 
 ```dart
-
+void stopStream() {
+    numberStreamController.close();
+}
 ```
 
 ### Langkah 6: Pindah ke method dispose()
     Jika method dispose() belum ada, Anda dapat mengetiknya dan dibuat override. Ketik kode ini didalamnya.
 
 ```dart
-
+@override
+void dispose() {
+    numberStreamController.close();
+    subscription.cancel();
+    super.dispose();
+}
 ```
 
 ### Langkah 7: Pindah ke method build()
     Tambahkan button kedua dengan isi kode seperti berikut ini.
 
 ```dart
-
+children: [
+    Text(lastNumber.toString()),
+    ElevatedButton(
+    onPressed: () => stopStream(),
+    child: const Text('Stop Subscription'),
+    ),
+],
 ```
 
 ### Langkah 8: Edit method addRandomNumber()
     Edit kode seperti berikut ini.
 
 ```dart
-
+void addRandomNumber() {
+    Random random = Random();
+    int myNum = random.nextInt(10);
+    // numberStream.addNumberToSink(myNum);
+    // numberStream.addError();
+    if (!numberStreamController.isClosed) {
+      numberStream.addNumberToSink(myNum);
+    } else {
+      setState(() {
+        lastNumber = -1;
+      });
+    }
+}
 ```
 
 ### Langkah 9: Run Project
     Anda akan melihat dua button seperti gambar berikut.
 
-![Image for Practicum 4 step 9]()
+![Image for Practicum 4 step 9](images/task/task-9.gif)
 
 ### Langkah 10: Tekan button ‘Stop Subscription'
     Anda akan melihat pesan di Debug Console seperti berikut.
 
-![Image for Practicum 4 step 10]()
+![Image for Practicum 4 step 10](images/practicum/p4-10.png)
 
 > 9. Task
 > - Jelaskan maksud kode langkah 2, 6 dan 8 tersebut!
 > - Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 > - Lalu lakukan commit dengan pesan "W13: Jawaban Soal 9".
+
+>   **Jawaban**: Kode pada langkah 2 digunakan untuk merekam jalannya data yang diterima oleh event, lalu akan menginisialisasi variabel lastNumber dengan nilai dari event. Kode langkah 6 digunakan untuk membatalkan subscription yang sebelumnya sudah diinisialisasi pada method setState. Kode langkah 8 digunakan untuk memeriksa apakan numberStreaController sudah tertutup atau belum, jika belum makan akan menginisialisasi numberStream dengan data random dan ketika sudah tertutup maka variabel lastNumber akan diinisialisasi dengan nilai -1.
+
+![Image for Practicum 4 step 9](images/task/task-9.gif)
 
 ## Praktikum 5: Multiple stream subscriptions
 Secara default, stream hanya bisa digunakan untuk satu subscription. Jika Anda mencoba untuk melakukan subscription yang sama lebih dari satu, maka akan terjadi error. Untuk menangani hal itu, tersedia broadcast stream yang dapat digunakan untuk multiple subscriptions. Pada praktikum ini, Anda akan mencoba untuk melakukan multiple stream subscriptions.
