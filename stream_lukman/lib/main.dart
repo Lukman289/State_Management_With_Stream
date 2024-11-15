@@ -33,6 +33,8 @@ class _StreamHomePageState extends State<StreamHomePage> {
   late NumberStream numberStream;
   late StreamTransformer transformer;
   late StreamSubscription subscription;
+  late StreamSubscription subscription2;
+  String values = '';
 
   void changeColor() async {
     // await for (var eventColor in colorStream.getColors()) {
@@ -74,7 +76,8 @@ class _StreamHomePageState extends State<StreamHomePage> {
 
     numberStream = NumberStream();
     numberStreamController = numberStream.controller;
-    Stream stream = numberStreamController.stream;
+    // Stream stream = numberStreamController.stream;
+    Stream stream = numberStreamController.stream.asBroadcastStream();
 
     // transformer = StreamTransformer<int, int>.fromHandlers(
     //   handleData: (value, sink) {
@@ -99,7 +102,13 @@ class _StreamHomePageState extends State<StreamHomePage> {
 
     subscription = stream.listen((event) {
       setState(() {
-        lastNumber = event;
+        values += '$event - ';
+      });
+    });
+    
+    subscription2 = stream.listen((event) {
+      setState(() {
+        values += '$event - ';
       });
     });
 
@@ -125,26 +134,27 @@ class _StreamHomePageState extends State<StreamHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Stream Lukman'),
+      appBar: AppBar(
+        title: const Text('Stream Lukman'),
+      ),
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(values),
+            ElevatedButton(
+              onPressed: () => addRandomNumber(),
+              child: const Text('New Random Number'),
+            ),
+            ElevatedButton(
+              onPressed: () => stopStream(),
+              child: const Text('Stop Subscription'),
+            ),
+          ],
         ),
-        body: SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(lastNumber.toString()),
-              ElevatedButton(
-                onPressed: () => addRandomNumber(),
-                child: const Text('New Random Number'),
-              ),
-              ElevatedButton(
-                onPressed: () => stopStream(),
-                child: const Text('Stop Subscription'),
-              ),
-            ],
-          ),
-        ));
+      )
+    );
   }
 }

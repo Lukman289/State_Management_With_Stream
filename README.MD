@@ -828,47 +828,107 @@ Secara default, stream hanya bisa digunakan untuk satu subscription. Jika Anda m
     Ketik variabel berikut di class _StreamHomePageState
 
 ```dart
-
+class _StreamHomePageState extends State<StreamHomePage> {
+  Color bgColor = Colors.blueGrey;
+  late ColorStream colorStream;
+  int lastNumber = 0;
+  late StreamController numberStreamController;
+  late NumberStream numberStream;
+  late StreamTransformer transformer;
+  late StreamSubscription subscription;
+  late StreamSubscription subscription2;
+  String values = '';
 ```
 
 ### Langkah 2: Edit initState()
     Ketik kode seperti berikut.
 
 ```dart
-
+subscription = stream.listen((event) {
+      setState(() {
+        values += '$event - ';
+      });
+    });
+    
+subscription2 = stream.listen((event) {
+    setState(() {
+    values += '$event - ';
+    });
+});
 ```
 
 ### Langkah 3: Run Project
     Lakukan run maka akan tampil error seperti gambar berikut.
 
-![Image for Practicum 5 step 3]()
+![Image for Practicum 5 step 3](images/practicum/p5-3.png)
 
 > 10. Task
 > - Jelaskan mengapa error itu bisa terjadi ?.
+
+>   **Jawaban**: Error tersebut terjadi karena terdapat 2 stream berjalan bersamaan akan tetapi menggunakan singgle stream, dimana singgle stream (stream) hanya dapat menjalankan 1 stream saja.
 
 ### Langkah 4: Set broadcast stream
     Ketik kode seperti berikut di method initState()
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    // Stream stream = numberStreamController.stream;
+    Stream stream = numberStreamController.stream.asBroadcastStream();
 ```
 
 ### Langkah 5: Edit method build()
 Tambahkan text seperti berikut
 
 ```dart
-
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stream Lukman'),
+      ),
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(values),
+            ElevatedButton(
+              onPressed: () => addRandomNumber(),
+              child: const Text('New Random Number'),
+            ),
+            ElevatedButton(
+              onPressed: () => stopStream(),
+              child: const Text('Stop Subscription'),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+}
 ```
 
 ### Langkah 6: Run Project
 Tekan button '**New Random Number**' beberapa kali, maka akan tampil teks angka terus bertambah sebanyak dua kali.
 
-![Image for Practicum 5 step 6]()
+![Image for Practicum 5 step 6](images/task/task-11.gif)
 
 > 11. Task
 > - Jelaskan mengapa hal itu bisa terjadi ?
 > - Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 > - Lalu lakukan commit dengan pesan "W13: Jawaban Soal 10,11".
+
+>   **Jawaban**: Hal tersebut bisa terjadi karena terdapat 2 stream yang memiliki fungsi yang sama berjalan secara bersamaan. Sehingga ketika button **New Random Number** ditekan akan memunculkan 2 angka yang sama.
+
+![Image for Practicum 5 step 6](images/task/task-11.gif)
 
 ## Praktikum 6: StreamBuilder
 `StreamBuilder` adalah sebuah widget untuk melakukan listen terhadap 
