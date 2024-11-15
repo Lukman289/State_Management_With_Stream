@@ -272,113 +272,211 @@ Di Flutter, Anda dapat menggunakan `StreamController` untuk mengontrol aliran da
     Lakukan impor dengan mengetik kode ini.
 
 ```dart
-
+import 'package:flutter/material.dart';
+import 'dart:async';
 ```
 
 ### Langkah 2: Tambah class NumberStream
     Tetap di file stream.dart tambah class baru seperti berikut.
 
 ```dart
-
+class NumberStream {
+  
+}
 ```
 
 ### Langkah 3: Tambah StreamController
     Di dalam class NumberStream buatlah variabel seperti berikut.
 
 ```dart
-
+class NumberStream {
+  final StreamController<int> controller = StreamController<int>();
+}
 ```
 
 ### Langkah 4: Tambah method addNumberToSink
     Tetap di class NumberStream buatlah method ini
 
 ```dart
+class NumberStream {
+  final StreamController<int> controller = StreamController<int>();
 
+  void addNumberToSink(int newNumber) {
+    controller.sink.add(newNumber);
+  }
+}
 ```
 
 ### Langkah 5: Tambah method close()
 
 ```dart
+class NumberStream {
+  final StreamController<int> controller = StreamController<int>();
 
+  void addNumberToSink(int newNumber) {
+    controller.sink.add(newNumber);
+  }
+
+  close() {
+    controller.close();
+  }
+}
 ```
 
 ### Langkah 6: Buka main.dart
     Ketik kode import seperti berikut
 
 ```dart
-
+import 'package:flutter/material.dart';
+import 'stream.dart';
+import 'dart:async';
+import 'dart:math';
 ```
 
 ### Langkah 7: Tambah variabel
     Di dalam class _StreamHomePageState ketik variabel berikut
 
 ```dart
-
+class _StreamHomePageState extends State<StreamHomePage> {
+  Color bgColor = Colors.blueGrey;
+  late ColorStream colorStream;
+  int lastNumber = 0;
+  late StreamController numberStreamController;
+  late NumberStream numberStream;
 ```
 
 ### Langkah 8: Edit initState()
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    //    colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+    stream.listen((event) {
+        setState(() {
+        lastNumber = event;
+        });
+    });
+}
 ```
 
 ### Langkah 9: Edit dispose()
 
 ```dart
-
+@override
+void dispose() {
+    numberStreamController.close();
+    super.dispose();
+}
 ```
 
 ### Langkah 10: Tambah method addRandomNumber()
 
 ```dart
 void addRandomNumber() {
-  Random random = Random();
-  int myNum = random.nextInt(10);
-  numberStream.addNumberToSink(myNum);
+    Random random = Random();
+    int myNum = random.nextInt(10);
+    numberStream.addNumberToSink(myNum);
 }
 ```
 
 ### Langkah 11: Edit method build()
 
 ```dart
-
+Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stream Lukman'),
+      ),
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(lastNumber.toString()),
+            ElevatedButton(
+              onPressed: () => addRandomNumber(),
+              child: const Text('New Random Number'),
+            ),
+          ],
+        ),
+      )
+    );
+}
 ```
 
 ### Langkah 12: Run Prokect
     Lakukan running pada aplikasi Flutter Anda, maka akan terlihat seperti gambar berikut.
 
-![image for practicum 2 step 12]()
+![image for practicum 2 step 12](images/task/task-6.gif)
 
 > 6. Task
 > - Jelaskan maksud kode langkah 8 dan 10 tersebut!
 > - Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
 > - Lalu lakukan commit dengan pesan "W13: Jawaban Soal 6".
 
+>   **Jawaban**: kode pada langkah 8 dan 10 digunakan untuk menginisialisasi data number baru. Langkah 8 digunakna untu menginisalisasi numberStrean dan controller yang akan memberikan data. Sedangkah langkah 10 digunakan untuk membuat nilai random yang nantinya diberikan pada objek numberStream menggunakan sink.
+
+![image for Task 6](images/task/task-6.gif)
+
 ## Langkah 13: Buka stream.dart
     Tambahkan method berikut ini.
 
 ```dart
-
+addError() {
+    controller.sink.addError('Error');
+}
 ```
 
 ## Langkah 14: Buka main.dart
     Tambahkan method onError di dalam class StreamHomePageState pada method listen di fungsi initState() seperti berikut ini.
 
 ```dart
+@override
+void initState() {
+    // super.initState();
+    // colorStream = ColorStream();
+    // changeColor();
 
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+    Stream stream = numberStreamController.stream;
+    stream.listen((event) {
+      setState(() {
+        lastNumber = event;
+      });
+    }).onError((error) {
+      setState(() {
+        lastNumber = -1;
+      });
+    });
+}
 ```
 
 ## Langkah 15: Edit method addRandomNumber()
     Lakukan comment pada dua baris kode berikut, lalu ketik kode seperti berikut ini.
 
 ```dart
-
+void addRandomNumber() {
+    Random random = Random();
+    // int myNum = random.nextInt(10);
+    // numberStream.addNumberToSink(myNum);
+    numberStream.addError();
+}
 ```
 
 > 7. Task
 > - Jelaskan maksud kode langkah 13 sampai 15 tersebut!
 > - Kembalikan kode seperti semula pada Langkah 15, comment addError() agar Anda dapat melanjutkan ke praktikum 3 berikutnya.
 > - Lalu lakukan commit dengan pesan "W13: Jawaban Soal 7".
+
+>   **Jawaban**: kode yang diterapkan pada langkah 13 hingga 15 digunakan untuk memberikan nilai -1 pada lastNumber ketika terjadi error dalam pengaliran data.
 
 ## Praktikum 3: Injeksi data ke streams
 Skenario yang umum dilakukan adalah melakukan manipulasi atau transformasi data stream sebelum sampai pada UI end user. Hal ini sangatlah berguna ketika Anda membutuhkan untuk filter data berdasarkan kondisi tertentu, melakukan validasi data, memodifikasinya, atau melakukan proses lain yang memicu beberapa output baru. Contohnya melakukan konversi angka ke string, membuat sebuah perhitungan, atau menghilangkan data yang berulang terus tampil.
