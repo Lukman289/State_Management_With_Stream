@@ -940,45 +940,98 @@ setiap data baru tersedia.
 ### Langkah 1: Buat Project Baru
     Buatlah sebuah project flutter baru dengan nama streambuilder_nama (beri nama panggilan Anda) di folder week-13/src/ repository GitHub Anda.
 
-![Image for Practicum 6 step 1]()
+![Image for Practicum 6 step 1](images/practicum/p6-1.png)
 
 ### Langkah 2: Buat file baru stream.dart
     Ketik kode ini
 
 ```dart
-
+class NumberStream{
+  
+}
 ```
     
 ### Langkah 3: Tetap di file stream.dart
     Ketik kode seperti berikut.
 
 ```dart
+import 'dart:math';
 
+class NumberStream{
+  Stream<int> getNumbers() async* {
+    yield* Stream.periodic(const Duration(seconds: 1), (int t) {
+      Random random = Random();
+      int myNum = random.nextInt(10);
+      return myNum;
+    });
+  }
+}
 ```
 
 ### Langkah 4: Edit main.dart
     Ketik kode seperti berikut ini.
 
 ```dart
+import 'package:flutter/material.dart';
+import 'stream.dart';
+import 'dart:async';
 
-```
+void main() {
+  runApp(const MyApp());
+}
 
-```dart
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Stream Lukman',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+      ),
+      home: const StreamHomePage(),
+    );
+  }
+}
+
+class StreamHomePage extends StatefulWidget {
+  const StreamHomePage({super.key});
+
+  @override
+  _StreamHomePageState createState() => _StreamHomePageState();
+}
+
+class _StreamHomePageState extends State<StreamHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Stream Lukman'),
+      ),
+      body: Container(),
+    );
+  }
+}
 ```
 
 ### Langkah 5: Tambah variabel
     Di dalam `class _StreamHomePageState`, ketika variabel ini.
 
 ```dart
-
+class _StreamHomePageState extends State<StreamHomePage> {
+  late Stream<int> numberStream;
 ```
 
 ### Langkah 6: Edit initState()
     Ketik kode seperti berikut.
 
 ```dart
-
+@override
+void initState() {
+    numberStream = NumberStream().getNumbers();
+    super.initState();
+}
 ```
 
 ### Langkah 7: Edit method build()
